@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wanderlust Diaries — Explore the world, one story at a time</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --terracotta: #C1440E;
+      --terracotta-dark: #a33a0b;
+      --sand: #F5E6D0;
+      --sand-light: #faf3eb;
+      --dark-brown: #2C1810;
+      --white: #ffffff;
+      --text-muted: #6b5b50;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      color: var(--dark-brown);
+      line-height: 1.6;
+      background: var(--white);
+    }
+
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; font-weight: 700; line-height: 1.2; }
+
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    ul { list-style: none; }
+
+    .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+
+    /* Fade-in animation */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== Navigation ===== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(44, 24, 16, 0.08);
+      transition: background 0.3s;
+    }
+
+    .navbar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--terracotta);
+    }
+
+    .nav-logo span { color: var(--dark-brown); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--dark-brown);
+      position: relative;
+      transition: color 0.3s;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--terracotta);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--terracotta); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 26px;
+      height: 2px;
+      background: var(--dark-brown);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--white);
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(193, 68, 14, 0.85) 0%, rgba(44, 24, 16, 0.7) 50%, rgba(44, 24, 16, 0.9) 100%),
+        linear-gradient(to bottom,
+          #2C1810 0%,
+          #5a3a28 20%,
+          #c1440e 35%,
+          #e8a87c 45%,
+          #87CEEB 50%,
+          #5ba3d9 60%,
+          #2d6a4f 70%,
+          #1b4332 80%,
+          #2C1810 100%
+        );
+      background-size: cover;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      padding: 0 1.5rem;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 40px rgba(0,0,0,0.3);
+    }
+
+    .hero-content h1 em {
+      font-style: italic;
+      color: var(--sand);
+    }
+
+    .hero-content p {
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      margin-bottom: 2.5rem;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.95rem 2.5rem;
+      border-radius: 50px;
+      font-family: 'Lato', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--terracotta);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: var(--terracotta-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(193, 68, 14, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--terracotta);
+      border: 2px solid var(--terracotta);
+    }
+
+    .btn-outline:hover {
+      background: var(--terracotta);
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(193, 68, 14, 0.3);
+    }
+
+    /* ===== Section common ===== */
+    .section { padding: 6rem 0; }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-header h2 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      margin-bottom: 0.75rem;
+      color: var(--dark-brown);
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 550px;
+      margin: 0 auto;
+    }
+
+    .accent-line {
+      width: 60px;
+      height: 3px;
+      background: var(--terracotta);
+      margin: 1rem auto 0;
+      border-radius: 2px;
+    }
+
+    /* ===== Featured Destinations ===== */
+    .destinations { background: var(--sand-light); }
+
+    .dest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .dest-card {
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(44, 24, 16, 0.08);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .dest-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(44, 24, 16, 0.15);
+    }
+
+    .dest-img {
+      height: 220px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dest-img-morocco {
+      background: linear-gradient(135deg, #C1440E 0%, #e8a87c 40%, #f0c27f 70%, #4b6cb7 100%);
+    }
+
+    .dest-img-japan {
+      background: linear-gradient(135deg, #ffb7c5 0%, #ff69b4 30%, #c41e3a 50%, #2d3436 70%, #ffffff 100%);
+    }
+
+    .dest-img-colombia {
+      background: linear-gradient(135deg, #2d6a4f 0%, #40916c 30%, #f4d03f 55%, #C1440E 80%, #1b4332 100%);
+    }
+
+    .dest-img-label {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(44, 24, 16, 0.75);
+      color: var(--white);
+      padding: 0.3rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .dest-body {
+      padding: 1.5rem;
+    }
+
+    .dest-body h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .dest-body p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.7;
+    }
+
+    .dest-body .btn-outline {
+      font-size: 0.9rem;
+      padding: 0.6rem 1.6rem;
+    }
+
+    /* ===== Blog Posts ===== */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .blog-card {
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(44, 24, 16, 0.08);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(44, 24, 16, 0.15);
+    }
+
+    .blog-img {
+      height: 200px;
+      position: relative;
+    }
+
+    .blog-img-1 {
+      background: linear-gradient(135deg, #264653 0%, #2a9d8f 50%, #e9c46a 100%);
+    }
+
+    .blog-img-2 {
+      background: linear-gradient(135deg, #f4845f 0%, #f27059 40%, #c1440e 100%);
+    }
+
+    .blog-img-3 {
+      background: linear-gradient(135deg, #e9c46a 0%, #f4a261 40%, #e76f51 100%);
+    }
+
+    .blog-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 0.3rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag-adventure { background: var(--terracotta); color: var(--white); }
+    .tag-culture { background: #2a9d8f; color: var(--white); }
+    .tag-food { background: #e76f51; color: var(--white); }
+
+    .blog-body { padding: 1.5rem; }
+
+    .blog-body h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.4rem;
+      line-height: 1.35;
+    }
+
+    .blog-date {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .blog-excerpt {
+      color: var(--text-muted);
+      font-size: 0.93rem;
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+
+    .blog-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .author-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--terracotta), var(--sand));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--white);
+      font-size: 0.8rem;
+    }
+
+    .author-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    /* ===== Travel Tips ===== */
+    .tips { background: var(--sand-light); }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .tip-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(44, 24, 16, 0.06);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .tip-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(44, 24, 16, 0.12);
+    }
+
+    .tip-icon {
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: var(--sand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .tip-content h3 {
+      font-size: 1.15rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .tip-content p {
+      color: var(--text-muted);
+      font-size: 0.93rem;
+      line-height: 1.65;
+    }
+
+    /* ===== Newsletter ===== */
+    .newsletter {
+      background: linear-gradient(135deg, var(--dark-brown) 0%, #4a2e22 100%);
+      color: var(--white);
+      text-align: center;
+    }
+
+    .newsletter h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      margin-bottom: 0.75rem;
+      color: var(--white);
+    }
+
+    .newsletter p {
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 0.75rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      padding: 0.95rem 1.25rem;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50px;
+      background: rgba(255,255,255,0.1);
+      color: var(--white);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .newsletter-form input::placeholder { color: rgba(255,255,255,0.5); }
+    .newsletter-form input:focus { border-color: var(--terracotta); }
+
+    .newsletter-form .btn-primary {
+      flex-shrink: 0;
+    }
+
+    /* ===== Footer ===== */
+    .footer {
+      background: var(--dark-brown);
+      color: rgba(255,255,255,0.7);
+      padding: 4rem 0 0;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .footer-brand .nav-logo {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .footer-brand p {
+      font-size: 0.93rem;
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, transform 0.3s;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .social-link:hover {
+      background: var(--terracotta);
+      transform: translateY(-2px);
+      color: var(--white);
+    }
+
+    .footer-col h4 {
+      color: var(--white);
+      font-size: 1.05rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-col ul { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .footer-col a {
+      color: rgba(255,255,255,0.65);
+      font-size: 0.93rem;
+      transition: color 0.3s;
+    }
+
+    .footer-col a:hover { color: var(--terracotta); }
+
+    .footer-bottom {
+      text-align: center;
+      padding: 1.5rem 0;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .nav-toggle { display: flex; }
+
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: var(--white);
+        flex-direction: column;
+        padding: 5rem 2rem 2rem;
+        gap: 1.5rem;
+        box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+        transition: right 0.35s ease;
+        z-index: 1001;
+      }
+
+      .nav-links.active { right: 0; }
+
+      .nav-close {
+        position: absolute;
+        top: 1.2rem;
+        right: 1.2rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--dark-brown);
+      }
+
+      .nav-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 1000;
+      }
+
+      .nav-overlay.active { display: block; }
+
+      .section { padding: 4rem 0; }
+
+      .newsletter-form {
+        flex-direction: column;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .dest-grid, .blog-grid, .tips-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="#home" class="nav-logo">Wanderlust<span>Diaries</span></a>
+      <div class="nav-links" id="navLinks">
+        <button class="nav-close" id="navClose" aria-label="Close menu">&times;</button>
+        <a href="#home">Home</a>
+        <a href="#destinations">Destinations</a>
+        <a href="#blog">Blog</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-overlay" id="navOverlay"></div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <h1>Explore the World, One <em>Story</em> at a Time</h1>
+      <p>Join Sofia Amrani on a journey through hidden destinations, vibrant cultures, and unforgettable adventures — all on a budget.</p>
+      <a href="#destinations" class="btn btn-primary">Start Exploring</a>
+    </div>
+  </section>
+
+  <!-- Featured Destinations -->
+  <section class="section destinations" id="destinations">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2>Featured Destinations</h2>
+        <p>Hand-picked places that will ignite your wanderlust and inspire your next adventure.</p>
+        <div class="accent-line"></div>
+      </div>
+      <div class="dest-grid">
+        <div class="dest-card fade-in">
+          <div class="dest-img dest-img-morocco">
+            <span class="dest-img-label">Africa</span>
+          </div>
+          <div class="dest-body">
+            <h3>Morocco</h3>
+            <p>Lose yourself in the labyrinthine medinas of Marrakech, sleep under Saharan stars, and savor tagine in the Atlas Mountains.</p>
+            <a href="#" class="btn btn-outline">Read More</a>
+          </div>
+        </div>
+        <div class="dest-card fade-in">
+          <div class="dest-img dest-img-japan">
+            <span class="dest-img-label">Asia</span>
+          </div>
+          <div class="dest-body">
+            <h3>Japan</h3>
+            <p>From neon-lit Tokyo streets to serene bamboo forests in Kyoto, Japan is a mesmerizing blend of ancient tradition and cutting-edge innovation.</p>
+            <a href="#" class="btn btn-outline">Read More</a>
+          </div>
+        </div>
+        <div class="dest-card fade-in">
+          <div class="dest-img dest-img-colombia">
+            <span class="dest-img-label">South America</span>
+          </div>
+          <div class="dest-body">
+            <h3>Colombia</h3>
+            <p>Dance to cumbia in Cartagena's colorful streets, trek through cloud forests, and discover coffee country's rolling green hills.</p>
+            <a href="#" class="btn btn-outline">Read More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Blog Posts -->
+  <section class="section" id="blog">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2>Latest from the Blog</h2>
+        <p>Stories, guides, and tips from the road — written for curious travelers like you.</p>
+        <div class="accent-line"></div>
+      </div>
+      <div class="blog-grid">
+        <article class="blog-card fade-in">
+          <div class="blog-img blog-img-1">
+            <span class="blog-tag tag-adventure">Adventure</span>
+          </div>
+          <div class="blog-body">
+            <h3>Hiking the Atlas Mountains: A 5-Day Guide</h3>
+            <p class="blog-date">March 15, 2026</p>
+            <p class="blog-excerpt">Everything you need to know about trekking North Africa's highest peaks — from gear lists to Berber homestays along the way.</p>
+            <div class="blog-author">
+              <div class="author-avatar">SA</div>
+              <span class="author-name">Sofia Amrani</span>
+            </div>
+          </div>
+        </article>
+        <article class="blog-card fade-in">
+          <div class="blog-img blog-img-2">
+            <span class="blog-tag tag-culture">Culture</span>
+          </div>
+          <div class="blog-body">
+            <h3>Living with a Host Family in Rural Japan</h3>
+            <p class="blog-date">March 8, 2026</p>
+            <p class="blog-excerpt">I spent two weeks in a small village near Takayama. Here's what I learned about Japanese hospitality, rice farming, and slowing down.</p>
+            <div class="blog-author">
+              <div class="author-avatar">SA</div>
+              <span class="author-name">Sofia Amrani</span>
+            </div>
+          </div>
+        </article>
+        <article class="blog-card fade-in">
+          <div class="blog-img blog-img-3">
+            <span class="blog-tag tag-food">Food</span>
+          </div>
+          <div class="blog-body">
+            <h3>A Food Lover's Guide to Bogot&aacute;</h3>
+            <p class="blog-date">February 28, 2026</p>
+            <p class="blog-excerpt">From street-side arepas to high-end tasting menus, Bogot&aacute;'s food scene is one of South America's best-kept secrets.</p>
+            <div class="blog-author">
+              <div class="author-avatar">SA</div>
+              <span class="author-name">Sofia Amrani</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Travel Tips -->
+  <section class="section tips" id="about">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2>Travel Tips</h2>
+        <p>Practical advice to make every journey smoother, smarter, and more meaningful.</p>
+        <div class="accent-line"></div>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-card fade-in">
+          <div class="tip-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C1440E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </div>
+          <div class="tip-content">
+            <h3>Packing Light</h3>
+            <p>Learn to travel with just a carry-on. Roll your clothes, choose versatile layers, and leave room for souvenirs. Your back will thank you.</p>
+          </div>
+        </div>
+        <div class="tip-card fade-in">
+          <div class="tip-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C1440E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="tip-content">
+            <h3>Budget Travel</h3>
+            <p>Amazing experiences don't require a fortune. Use local transport, eat where locals eat, and consider shoulder season for the best deals.</p>
+          </div>
+        </div>
+        <div class="tip-card fade-in">
+          <div class="tip-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C1440E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0112 2a8 8 0 018 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="tip-content">
+            <h3>Solo Travel Safety</h3>
+            <p>Share your itinerary with someone you trust, keep digital copies of your documents, and always trust your instincts when exploring new places.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="section newsletter" id="contact">
+    <div class="container">
+      <div class="fade-in">
+        <h2>Get Travel Inspiration in Your Inbox</h2>
+        <p>Join 12,000+ readers who receive weekly destination guides, travel deals, and stories from the road.</p>
+        <form class="newsletter-form" onsubmit="handleSubscribe(event)">
+          <input type="email" placeholder="Your email address" required aria-label="Email address">
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#home" class="nav-logo">Wanderlust<span>Diaries</span></a>
+          <p>Written by Sofia Amrani — a travel writer and photographer passionate about budget travel, hidden destinations, and cultural experiences. Currently somewhere between a caf&eacute; and a mountain trail.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Instagram">IG</a>
+            <a href="#" class="social-link" aria-label="Twitter">X</a>
+            <a href="#" class="social-link" aria-label="YouTube">YT</a>
+            <a href="#" class="social-link" aria-label="Pinterest">Pi</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#destinations">Destinations</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Top Destinations</h4>
+          <ul>
+            <li><a href="#">Morocco</a></li>
+            <li><a href="#">Japan</a></li>
+            <li><a href="#">Colombia</a></li>
+            <li><a href="#">Portugal</a></li>
+            <li><a href="#">Vietnam</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Wanderlust Diaries. All rights reserved. Made with love from wherever the road leads.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile navigation
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    const navClose = document.getElementById('navClose');
+    const navOverlay = document.getElementById('navOverlay');
+
+    function openNav() {
+      navLinks.classList.add('active');
+      navOverlay.classList.add('active');
+    }
+
+    function closeNav() {
+      navLinks.classList.remove('active');
+      navOverlay.classList.remove('active');
+    }
+
+    navToggle.addEventListener('click', openNav);
+    navClose.addEventListener('click', closeNav);
+    navOverlay.addEventListener('click', closeNav);
+
+    // Close nav on link click (mobile)
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeNav);
+    });
+
+    // Intersection Observer for fade-in animations
+    const fadeEls = document.querySelectorAll('.fade-in');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    fadeEls.forEach(el => observer.observe(el));
+
+    // Newsletter subscribe
+    function handleSubscribe(e) {
+      e.preventDefault();
+      const input = e.target.querySelector('input');
+      const btn = e.target.querySelector('button');
+      btn.textContent = 'Subscribed!';
+      btn.style.background = '#2a9d8f';
+      input.value = '';
+      setTimeout(() => {
+        btn.textContent = 'Subscribe';
+        btn.style.background = '';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
