@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notelane — AI-Powered Note Taking</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#" class="logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <rect width="28" height="28" rx="6" fill="#6366F1"/>
+          <path d="M8 9h12M8 14h8M8 19h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Notelane</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#social-proof">Trusted By</a></li>
+      </ul>
+      <a href="#hero" class="btn btn-sm">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="container hero-inner">
+      <div class="badge fade-up">Powered by AI</div>
+      <h1 class="fade-up">Notes that think<br>with you.</h1>
+      <p class="hero-sub fade-up">
+        Notelane uses AI to organize, summarize, and connect your notes — so you can focus on what matters.
+      </p>
+      <form class="waitlist-form fade-up" onsubmit="handleWaitlist(event)">
+        <input type="email" placeholder="you@email.com" required aria-label="Email address">
+        <button type="submit" class="btn">Get Early Access</button>
+      </form>
+      <p class="waitlist-note fade-up">Free during beta. No credit card required.</p>
+      <div class="hero-glow"></div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="section-title fade-up">Everything you need to capture ideas</h2>
+      <div class="features-grid">
+
+        <div class="card fade-up">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a7 7 0 0 1 7 7c0 3-2 5.5-4 7l-3 3.5L9 16c-2-1.5-4-4-4-7a7 7 0 0 1 7-7z"/>
+              <circle cx="12" cy="9" r="2"/>
+            </svg>
+          </div>
+          <h3>Smart Summaries</h3>
+          <p>Instantly distill long notes into concise summaries. Notelane reads between the lines so you don't have to.</p>
+        </div>
+
+        <div class="card fade-up">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <h3>Auto-Organization</h3>
+          <p>Notes automatically tagged, linked, and filed. Spend zero time organizing — the AI handles the structure.</p>
+        </div>
+
+        <div class="card fade-up">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <h3>Ask Your Notes</h3>
+          <p>Chat with your notebook. Ask questions, find connections, and surface insights buried in months of writing.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <h2 class="section-title fade-up">How it works</h2>
+      <div class="steps">
+
+        <div class="step fade-up">
+          <div class="step-number">1</div>
+          <h3>Write naturally</h3>
+          <p>Just type or paste your notes. No templates, no formatting rules — write however you think.</p>
+        </div>
+
+        <div class="step fade-up">
+          <div class="step-number">2</div>
+          <h3>AI processes everything</h3>
+          <p>Notelane indexes, tags, summarizes, and links your notes in the background — instantly.</p>
+        </div>
+
+        <div class="step fade-up">
+          <div class="step-number">3</div>
+          <h3>Retrieve anything</h3>
+          <p>Search semantically, ask questions, or let the AI surface what's relevant when you need it.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof -->
+  <section class="social-proof" id="social-proof">
+    <div class="container">
+      <p class="social-label fade-up">Trusted by teams at</p>
+      <div class="logos fade-up">
+        <div class="logo-item">Stripe</div>
+        <div class="logo-item">Vercel</div>
+        <div class="logo-item">Linear</div>
+        <div class="logo-item">Notion</div>
+        <div class="logo-item">Figma</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <rect width="28" height="28" rx="6" fill="#6366F1"/>
+            <path d="M8 9h12M8 14h8M8 19h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Notelane</span>
+        </a>
+        <p>&copy; 2026 Notelane. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Twitter</a>
+        <a href="#">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
