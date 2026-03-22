@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wanderlust Diaries — Explore the world, one story at a time</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Variables ────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --terracotta:  #C1440E;
+      --terracotta-light: #D4622E;
+      --sand:        #F5E6D0;
+      --sand-light:  #FAF3EA;
+      --dark-brown:  #2C1810;
+      --brown-mid:   #5C3D2E;
+      --white:       #FFFFFF;
+      --gray:        #7A6E66;
+      --radius:      12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      color: var(--dark-brown);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', serif;
+      line-height: 1.2;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Scroll Animations ───────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Navigation ──────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .nav.scrolled {
+      border-bottom-color: rgba(44, 24, 16, 0.08);
+      box-shadow: 0 2px 20px rgba(44, 24, 16, 0.06);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--terracotta);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+    }
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--brown-mid);
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--terracotta); }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .nav-toggle span {
+      width: 24px;
+      height: 2px;
+      background: var(--dark-brown);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* ── Buttons ──────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 32px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--white);
+      background: var(--terracotta);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .btn:hover {
+      background: var(--terracotta-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(193, 68, 14, 0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--terracotta);
+      border: 2px solid var(--terracotta);
+    }
+    .btn-outline:hover {
+      background: var(--terracotta);
+      color: var(--white);
+    }
+
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background:
+        linear-gradient(135deg, rgba(44, 24, 16, 0.55) 0%, rgba(193, 68, 14, 0.35) 100%),
+        linear-gradient(180deg, #8B6914 0%, #C1440E 40%, #2C1810 100%);
+      background-size: cover;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 80%, rgba(245, 230, 208, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(193, 68, 14, 0.2) 0%, transparent 50%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      padding: 0 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 40px;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    /* ── Section Titles ──────────────────────────────── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .section-header h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .section-header p {
+      color: var(--gray);
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── Featured Destinations ────────────────────────── */
+    .destinations {
+      padding: 100px 0;
+      background: var(--sand-light);
+    }
+
+    .dest-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .dest-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(44, 24, 16, 0.06);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .dest-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(44, 24, 16, 0.12);
+    }
+
+    .dest-img {
+      height: 220px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dest-img-morocco  { background: linear-gradient(135deg, #E8913A 0%, #C1440E 60%, #8B2E0A 100%); }
+    .dest-img-japan    { background: linear-gradient(135deg, #F7B2C4 0%, #D4507A 50%, #6B2C4A 100%); }
+    .dest-img-colombia { background: linear-gradient(135deg, #2ECC71 0%, #1A8E4A 50%, #0F5C30 100%); }
+
+    .dest-img::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--white);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .dest-body {
+      padding: 24px;
+    }
+    .dest-body p {
+      font-size: 0.92rem;
+      color: var(--gray);
+      margin-bottom: 18px;
+      line-height: 1.65;
+    }
+    .dest-body .btn-outline {
+      padding: 10px 22px;
+      font-size: 0.85rem;
+    }
+
+    /* ── Blog Posts ───────────────────────────────────── */
+    .blog {
+      padding: 100px 0;
+    }
+
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .blog-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--white);
+      border: 1px solid rgba(44, 24, 16, 0.06);
+      box-shadow: 0 2px 12px rgba(44, 24, 16, 0.04);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .blog-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(44, 24, 16, 0.1);
+    }
+
+    .blog-img {
+      height: 200px;
+    }
+    .blog-img-1 { background: linear-gradient(135deg, #F0C27F 0%, #4B1248 100%); }
+    .blog-img-2 { background: linear-gradient(135deg, #C1440E 0%, #F5E6D0 100%); }
+    .blog-img-3 { background: linear-gradient(135deg, #2C1810 0%, #E8913A 100%); }
+
+    .blog-body {
+      padding: 24px;
+    }
+
+    .blog-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    .tag-adventure { background: rgba(193, 68, 14, 0.1); color: var(--terracotta); }
+    .tag-culture   { background: rgba(107, 44, 74, 0.1); color: #6B2C4A; }
+    .tag-food      { background: rgba(46, 204, 113, 0.1); color: #1A8E4A; }
+
+    .blog-body h3 {
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+    }
+
+    .blog-date {
+      font-size: 0.8rem;
+      color: var(--gray);
+      margin-bottom: 10px;
+    }
+
+    .blog-excerpt {
+      font-size: 0.9rem;
+      color: var(--gray);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .blog-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(44, 24, 16, 0.06);
+    }
+    .blog-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--terracotta), var(--sand));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .blog-author-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    /* ── Travel Tips ─────────────────────────────────── */
+    .tips {
+      padding: 100px 0;
+      background: var(--sand-light);
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 28px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 12px rgba(44, 24, 16, 0.04);
+    }
+
+    .tip-icon {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(193, 68, 14, 0.08);
+      border-radius: 10px;
+      color: var(--terracotta);
+    }
+
+    .tip h3 {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+    .tip p {
+      font-size: 0.88rem;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* ── Newsletter ───────────────────────────────────── */
+    .newsletter {
+      padding: 100px 0;
+      text-align: center;
+    }
+
+    .newsletter h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      margin-bottom: 12px;
+    }
+    .newsletter > .container > p {
+      color: var(--gray);
+      font-size: 1rem;
+      margin-bottom: 36px;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      min-width: 240px;
+      padding: 14px 20px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      color: var(--dark-brown);
+      background: var(--sand-light);
+      border: 1px solid rgba(44, 24, 16, 0.12);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .newsletter-form input:focus {
+      border-color: var(--terracotta);
+    }
+
+    /* ── Footer ───────────────────────────────────────── */
+    .footer {
+      padding: 60px 0 32px;
+      background: var(--dark-brown);
+      color: rgba(245, 230, 208, 0.7);
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand .nav-logo {
+      margin-bottom: 12px;
+    }
+    .footer-brand p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 320px;
+    }
+
+    .footer-col h4 {
+      font-size: 0.95rem;
+      color: var(--sand);
+      margin-bottom: 16px;
+    }
+    .footer-col ul li {
+      margin-bottom: 10px;
+    }
+    .footer-col a {
+      font-size: 0.88rem;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--sand); }
+
+    .footer-bottom {
+      padding-top: 24px;
+      border-top: 1px solid rgba(245, 230, 208, 0.1);
+      text-align: center;
+      font-size: 0.82rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .social-link {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(245, 230, 208, 0.08);
+      transition: background 0.2s;
+    }
+    .social-link:hover {
+      background: rgba(245, 230, 208, 0.18);
+    }
+    .social-link svg {
+      width: 16px;
+      height: 16px;
+      fill: rgba(245, 230, 208, 0.7);
+    }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 900px) {
+      .dest-grid, .blog-grid, .tips-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .footer-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 68px;
+        left: 0; right: 0;
+        background: var(--white);
+        flex-direction: column;
+        padding: 24px;
+        gap: 20px;
+        border-bottom: 1px solid rgba(44, 24, 16, 0.08);
+        box-shadow: 0 8px 24px rgba(44, 24, 16, 0.08);
+      }
+      .nav-links.open { display: flex; }
+      .nav-toggle { display: flex; }
+
+      .dest-grid, .blog-grid, .tips-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tip { flex-direction: column; }
+
+      .footer-inner {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .hero h1 { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════ NAVIGATION ═══════════ -->
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">Wanderlust Diaries</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#destinations">Destinations</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#tips">About</a></li>
+        <li><a href="#newsletter">Contact</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <h1 class="reveal">Explore the World,<br>One Story at a Time</h1>
+      <p class="hero-sub reveal">
+        Join Sofia Amrani on a journey through hidden destinations, vibrant cultures, and unforgettable experiences — all on a budget.
+      </p>
+      <a href="#destinations" class="btn reveal">Start Exploring</a>
+    </div>
+  </section>
+
+  <!-- ═══════════ FEATURED DESTINATIONS ═══════════ -->
+  <section class="destinations" id="destinations">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Featured Destinations</h2>
+        <p>Handpicked places that will awaken your sense of adventure</p>
+      </div>
+      <div class="dest-grid">
+
+        <div class="dest-card reveal">
+          <div class="dest-img dest-img-morocco" data-label="Morocco"></div>
+          <div class="dest-body">
+            <p>Lose yourself in the winding medinas of Marrakech, sleep under Saharan stars, and savor tagine made by local hands.</p>
+            <a href="#" class="btn btn-outline">Read More</a>
+          </div>
+        </div>
+
+        <div class="dest-card reveal">
+          <div class="dest-img dest-img-japan" data-label="Japan"></div>
+          <div class="dest-body">
+            <p>From Kyoto's bamboo forests to Tokyo's neon labyrinth — discover a country where ancient tradition and hyper-modernity dance together.</p>
+            <a href="#" class="btn btn-outline">Read More</a>
+          </div>
+        </div>
+
+        <div class="dest-card reveal">
+          <div class="dest-img dest-img-colombia" data-label="Colombia"></div>
+          <div class="dest-body">
+            <p>Coffee highlands, Caribbean coasts, and the warmest people you'll ever meet. Colombia is South America's best-kept secret.</p>
+            <a href="#" class="btn btn-outline">Read More</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ LATEST BLOG POSTS ═══════════ -->
+  <section class="blog" id="blog">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Latest Stories</h2>
+        <p>Fresh dispatches from the road</p>
+      </div>
+      <div class="blog-grid">
+
+        <article class="blog-card reveal">
+          <div class="blog-img blog-img-1"></div>
+          <div class="blog-body">
+            <span class="blog-tag tag-adventure">Adventure</span>
+            <h3>Hiking the Atlas Mountains on $30 a Day</h3>
+            <p class="blog-date">March 12, 2026</p>
+            <p class="blog-excerpt">A week-long trek through Berber villages with nothing but a backpack and an open heart. Here's exactly how I did it.</p>
+            <div class="blog-author">
+              <div class="blog-avatar">SA</div>
+              <span class="blog-author-name">Sofia Amrani</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="blog-card reveal">
+          <div class="blog-img blog-img-2"></div>
+          <div class="blog-body">
+            <span class="blog-tag tag-culture">Culture</span>
+            <h3>Tea Ceremonies and Temple Stays in Kyoto</h3>
+            <p class="blog-date">February 28, 2026</p>
+            <p class="blog-excerpt">What happens when you slow down in the fastest country on Earth? I spent a silent week in Kyoto finding out.</p>
+            <div class="blog-author">
+              <div class="blog-avatar">SA</div>
+              <span class="blog-author-name">Sofia Amrani</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="blog-card reveal">
+          <div class="blog-img blog-img-3"></div>
+          <div class="blog-body">
+            <span class="blog-tag tag-food">Food</span>
+            <h3>Street Food Safari Through Cartagena</h3>
+            <p class="blog-date">February 14, 2026</p>
+            <p class="blog-excerpt">Arepas, ceviche, and fruit you've never heard of — the ultimate guide to eating your way through Colombia's coast.</p>
+            <div class="blog-author">
+              <div class="blog-avatar">SA</div>
+              <span class="blog-author-name">Sofia Amrani</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ TRAVEL TIPS ═══════════ -->
+  <section class="tips" id="tips">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Travel Tips</h2>
+        <p>Lessons learned from years on the road</p>
+      </div>
+      <div class="tips-grid">
+
+        <div class="tip reveal">
+          <div class="tip-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Pack Light</h3>
+            <p>One bag, endless freedom. Learn to travel with just a carry-on — your back and your budget will thank you.</p>
+          </div>
+        </div>
+
+        <div class="tip reveal">
+          <div class="tip-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Budget Travel</h3>
+            <p>See the world without emptying your wallet. Local transport, street food, and hostels go a surprisingly long way.</p>
+          </div>
+        </div>
+
+        <div class="tip reveal">
+          <div class="tip-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Solo Travel Safety</h3>
+            <p>Trust your instincts, share your itinerary, and stay connected. Solo travel is one of life's greatest gifts — when done right.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ NEWSLETTER ═══════════ -->
+  <section class="newsletter" id="newsletter">
+    <div class="container">
+      <h2 class="reveal">Get Travel Inspiration<br>in Your Inbox</h2>
+      <p class="reveal">One email a week. No spam — just stories, tips, and hidden gems from around the world.</p>
+      <form class="newsletter-form reveal" onsubmit="handleSubscribe(event)">
+        <input type="email" placeholder="you@email.com" required aria-label="Email address">
+        <button type="submit" class="btn">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="nav-logo">Wanderlust Diaries</div>
+          <p>Written by Sofia Amrani — travel writer, photographer, and firm believer that the best stories are found off the beaten path.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Twitter">
+              <svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0012 7.47v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="rgba(245,230,208,0.7)" stroke-width="2"/><circle cx="12" cy="12" r="5" fill="none" stroke="rgba(245,230,208,0.7)" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="rgba(245,230,208,0.7)"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="YouTube">
+              <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z"/><polygon points="9.75,15.02 15.5,11.75 9.75,8.48" fill="#2C1810"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#destinations">Destinations</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#tips">Travel Tips</a></li>
+            <li><a href="#newsletter">Newsletter</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>More</h4>
+          <ul>
+            <li><a href="#">About Sofia</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Wanderlust Diaries. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Scroll reveal animations ──────────────────────
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const delay = entry.target.dataset.delay || 0;
+            setTimeout(() => entry.target.classList.add('visible'), delay);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    document.querySelectorAll('.reveal').forEach((el) => {
+      const siblings = Array.from(el.parentElement.querySelectorAll(':scope > .reveal'));
+      const index = siblings.indexOf(el);
+      el.dataset.delay = index * 120;
+      observer.observe(el);
+    });
+
+    // ── Sticky nav scroll effect ──────────────────────
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // ── Mobile nav toggle ─────────────────────────────
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+
+    // Close mobile nav on link click
+    navLinks.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+
+    // ── Newsletter form ───────────────────────────────
+    function handleSubscribe(e) {
+      e.preventDefault();
+      const input = e.target.querySelector('input');
+      const btn = e.target.querySelector('button');
+      btn.textContent = 'Subscribed!';
+      btn.style.background = '#1A8E4A';
+      input.value = '';
+      setTimeout(() => {
+        btn.textContent = 'Subscribe';
+        btn.style.background = '';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
